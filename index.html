@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>토토 계산기</title>
+  <style>
+    /* 전체 컨테이너 스타일 */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  
+    /* 폼 스타일 */
+    .container {
+      max-width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  
+    h1 {
+      text-align: center;
+    }
+  
+    form {
+      margin-top: 20px;
+    }
+  
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+  
+    input,
+    button {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  
+    button {
+      margin-top: 10px;
+      background-color: #4caf50;
+      color: #fff;
+      cursor: pointer;
+    }
+  
+    /* 리더보드 스타일 */
+    .leaderboard {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  
+    .leaderboard h2 {
+      text-align: center;
+    }
+  
+    .leaderboard ul {
+      list-style-type: none;
+      padding: 0;
+    }
+  
+    .leaderboard li {
+      margin-bottom: 5px;
+    }
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <h1>토토 계산기</h1>
+    <form id="login-form">
+      <h2>로그인</h2>
+      <div class="form-group">
+        <label for="username">사용자 이름:</label>
+        <input type="text" id="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">비밀번호:</label>
+        <input type="password" id="password" required>
+      </div>
+      <button type="submit">로그인</button>
+    </form>
+    <form id="record-form" style="display: none;">
+      <h2>수익률 기록</h2>
+      <div class="form-group">
+        <label for="purchase-amount">구매금액:</label>
+        <input type="number" id="purchase-amount" required>
+      </div>
+      <div class="form-group">
+        <label for="dividend-rate">배당률:</label>
+        <input type="number" id="dividend-rate" step="0.01" required>
+      </div>
+      <div class="form-group">
+        <label for="purchase-details">구매 상세 내역:</label>
+        <input type="text" id="purchase-details" required>
+      </div>
+      <button type="submit">기록하기</button>
+    </form>
+    <div class="leaderboard">
+      <h2>리더보드</h2>
+      <ul id="leaderboard-list"></ul>
+    </div>
+  </div>
+
+  <script>
+    // 친구들 정보를 저장할 객체
+    const friends = {
+      "friend1": {
+        password: "password1",
+        records: []
+      },
+      "friend2": {
+        password: "password2",
+        records: []
+      },
+      // 친구들 정보를 필요에 따라 추가할 수 있음
+    };
+
+    // 로그인 폼 요소
+    const loginForm = document.getElementById("login-form");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+
+    // 수익률 기록 폼 요소
+    const recordForm = document.getElementById("record-form");
+    const purchaseAmountInput = document.getElementById("purchase-amount");
+    const dividendRateInput = document.getElementById("dividend-rate");
+    const purchaseDetailsInput = document.getElementById("purchase-details");
+
+    // 리더보드 요소
+    const leaderboardList = document.getElementById("leaderboard-list");
+
+    // 로그인 폼 제출 핸들러
+    loginForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const username = usernameInput.value;
+  const password = passwordInput.value;
+
+  // 사용자가 입력한 비밀번호가 맞는지 확인
+  if (friends.hasOwnProperty(username) && friends[username].password === password) {
+    // 로그인 성공
+    loginForm.style.display = "none";
+    recordForm.style.display = "block";
+    leaderboardList.innerHTML = "";
+
+    // 수익률 기록 폼 제출 핸들러
+    recordForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const purchaseAmount = parseFloat(purchaseAmountInput.value);
+      const dividendRate = parseFloat(dividendRateInput.value);
+      const purchaseDetails = purchaseDetailsInput.value;
+
+      // 수익률 계산
+      const profit = purchaseAmount * dividendRate;
+
+      // 사용자의 기록 추가
+      friends[username].records.push({
+        purchaseAmount: purchaseAmount,
+        dividendRate: dividendRate,
+        purchaseDetails: purchaseDetails,
+        profit: profit
+      });
+
+      // 리더보드 갱신
+      updateLeaderboard();
+
+      // 입력 필드 초기화
+      purchaseAmountInput.value = "";
+      dividendRateInput.value = "";
+      purchaseDetailsInput.value = "";
+    });
+  } else {
+    alert("사용자 이름 또는 비밀번호가 잘못되었습니다.");
+  }
+});
+
+// 리더보드 업데이트 함수
+function updateLeaderboard() {
+  // 전체 리더보드 배열 생성
+  const leaderboard = [];
+
+  // 모든 사용자의 기록을 리더보드 배열에 추가
+  for (const friend in friends) {
+    const records = friends[friend].records;
+    const totalProfit = records.reduce((total, record) => total + record.profit, 0);
+
+    leaderboard.push({
+      username: friend,
+      totalProfit: totalProfit
+    });
+  }
+
+  // 리더보드 정렬 (총 수익률에 따라 내림차순 정렬)
+  leaderboard.sort((a, b) => b.totalProfit - a.totalProfit);
+
+  // 리더보드 리스트 업데이트
+  leaderboardList.innerHTML = "";
+  for (const entry of leaderboard) {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${entry.username}: ${entry.totalProfit.toFixed(2)}`;
+    leaderboardList.appendChild(listItem);
+  }
+}
+  </script>
+</body>
+</html>
+

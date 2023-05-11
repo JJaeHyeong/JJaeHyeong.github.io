@@ -116,35 +116,35 @@
   <script>
     // 친구들 정보를 저장할 객체
     const friends = {
-      "friend1": {
+      "cyok": {
         password: "1234",
         records: []
       },
-      "friend2": {
+      "jhjang": {
         password: "1234",
         records: []
       },
-      "friend3": {
+      "hslee": {
         password: "1234",
         records: []
       },
-      "friend4": {
+      "dhjin": {
         password: "1234",
         records: []
       },
-      "friend5": {
+      "nmchoi": {
         password: "1234",
         records: []
       },
-      "friend6": {
+      "sjhuh": {
         password: "1234",
         records: []
       },
-      "friend7": {
+      "shlee": {
         password: "1234",
         records: []
       },
-      "friend8": {
+      "htyoon": {
         password: "1234",
         records: []
       },
@@ -188,7 +188,7 @@
       const purchaseDetails = purchaseDetailsInput.value;
 
       // 수익률 계산
-      const profit = purchaseAmount * dividendRate;
+      const profit = purchaseAmount * dividendRate - purchaseAmount;
 
       // 사용자의 기록 추가
       friends[username].records.push({
@@ -241,3 +241,4 @@ function updateLeaderboard() {
   </script>
 </body>
 </html>
+
